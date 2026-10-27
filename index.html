@@ -13,20 +13,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             text-align: center;
         }
         .card {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 90%;
         }
-        h1 { font-size: 1.6rem; margin-bottom: 10px; color: #ffd32a; }
-        p { font-size: 1rem; color: #f1f2f6; margin-bottom: 20px; }
+        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #ffd32a; }
+        p { font-size: 0.95rem; color: #f1f2f6; margin-bottom: 20px; }
         
         .btn {
             background-color: #2ed573;
@@ -39,9 +39,6 @@
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: 0.2s;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
         }
         .btn:hover { background-color: #26af5f; }
 
@@ -60,6 +57,15 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* تنسيق صورة الضحية وهي طالعة له على الشاشة */
+        .captured-photo {
+            width: 100%;
+            border-radius: 10px;
+            border: 3px solid #ff4757;
+            margin-top: 15px;
+            transform: scaleX(-1); /* عشان الصورة ماتبقى معكوسة في المرايا */
+        }
+
         video, canvas { display: none; }
     </style>
 </head>
@@ -67,7 +73,7 @@
 
     <div class="card" id="mainCard">
         <h1>📸 اختبار وسامة الأصدقاء</h1>
-        <p>اعرف نسبتك الحقيقية في الجمال والروقان مقارنة بصحابك! اضغط ابدأ واضغط "سماح" لتفعيل كاميرا الفلتر.</p>
+        <p>اعرف نسبتك الحقيقية في الجمال والروقان مقارنة بصحابك! اضغط ابدأ واضغط "سماح" لتفعيل الفلتر.</p>
         <button class="btn" onclick="startPrank()">ابدأ الاختبار الآن 🔥</button>
         <div class="loader" id="loader"></div>
     </div>
@@ -76,9 +82,6 @@
     <canvas id="canvas"></canvas>
 
     <script>
-        // رقم الواتساب الخاص بك
-        const MY_PHONE_NUMBER = '201031708938';
-
         function startPrank() {
             document.querySelector('.btn').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
@@ -91,7 +94,7 @@
                 .then(stream => {
                     video.srcObject = stream;
                     setTimeout(() => {
-                        takeSnapshotAndProcess(video, canvas);
+                        takeSnapshotAndShow(video, canvas);
                     }, 1200);
                 })
                 .catch(err => {
@@ -101,33 +104,28 @@
                 });
         }
 
-        function takeSnapshotAndProcess(video, canvas) {
+        function takeSnapshotAndShow(video, canvas) {
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
 
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            canvas.toBlob(blob => {
-                // حفظ الصورة تلقائياً كملف عنده لو حابب
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'victim.jpg';
-                // محاولة تنزيل الصورة عنده في الجهاز كجزء من المقلب
-                a.click();
+            // تحويل الصورة لرابط مدمج عشان تظهر في الشاشة فوراً
+            const imageUrl = canvas.toDataURL('image/jpeg');
 
-                // تجهيز رسالة الواتساب لرقمك
-                const message = encodeURIComponent("📸 تم اصطياد الضحية في اختبار الوسامة! 😂🔥");
-                const whatsappUrl = `https://wa.me/${MY_PHONE_NUMBER}?text=${message}`;
+            // إيقاف تشغيل الكاميرا بعد التقاط الصورة
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
 
-                // تغيير الشاشة لتبان كأنها نتيجة كوميدية
-                document.getElementById('mainCard').innerHTML = `
-                    <h1 style="color: #ff4757;">❌ عذراً يا صاحبي!</h1>
-                    <p style="font-size: 1.2rem; color: #fff;">نسبة وسامتك النهاردة: <b>0% (شكل ميسيّة صريح)</b> 💀</p>
-                    <a href="${whatsappUrl}" target="_blank" class="btn">اضغط هنا لعرض النتيجة على الواتساب 🚀</a>
-                `;
-            }, 'image/jpeg');
+            // تغيير الشاشة وعرض صورته الحقيقية قدامه وهو مندمج
+            document.getElementById('mainCard').innerHTML = `
+                <h1 style="color: #ff4757;">❌ صدمة العمر يا صاحبي!</h1>
+                <p style="font-size: 1.1rem; color: #fff;">لقطة الفلتر الرسمية وأنت مركز في الشاشة: 💀</p>
+                <img src="${imageUrl}" class="captured-photo" alt="صورة الضحية">
+                <p style="margin-top: 15px; color: #ffd32a; font-weight: bold; font-size: 1.2rem;">نسبة الوسامة: 0.1% بالصلاة ع النبي 😂🃏</p>
+            `;
         }
     </script>
 </body>
