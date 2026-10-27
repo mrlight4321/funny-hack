@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اختبار وسامة الأصدقاء 😎🔥</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             background: linear-gradient(135deg, #ff4757, #2f3542);
             color: #fff;
@@ -15,32 +18,34 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
+            padding: 15px;
             text-align: center;
         }
         .card {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            max-width: 400px;
-            width: 90%;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 25px 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 380px;
         }
-        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #ffd32a; }
-        p { font-size: 0.95rem; color: #f1f2f6; margin-bottom: 20px; }
+        h1 { font-size: 1.4rem; margin-bottom: 12px; color: #ffd32a; }
+        p { font-size: 0.95rem; color: #f1f2f6; margin-bottom: 20px; line-height: 1.5; }
         
         .btn {
             background-color: #2ed573;
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            width: 100%;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: 0.2s;
         }
-        .btn:hover { background-color: #26af5f; }
+        .btn:active { transform: scale(0.97); }
 
         .loader {
             border: 4px solid rgba(255,255,255,0.3);
@@ -57,13 +62,15 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* تنسيق صورة الضحية وهي طالعة له على الشاشة */
+        /* تنسيق الصورة عشان تكون متجاوبة تماماً مع شاشات الموبايل */
         .captured-photo {
             width: 100%;
-            border-radius: 10px;
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
             border: 3px solid #ff4757;
             margin-top: 15px;
-            transform: scaleX(-1); /* عشان الصورة ماتبقى معكوسة في المرايا */
+            transform: scaleX(-1); /* منع عكس الصورة */
         }
 
         video, canvas { display: none; }
@@ -111,22 +118,20 @@
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // تحويل الصورة لرابط مدمج عشان تظهر في الشاشة فوراً
             const imageUrl = canvas.toDataURL('image/jpeg');
 
-            // إيقاف تشغيل الكاميرا بعد التقاط الصورة
             const stream = video.srcObject;
             const tracks = stream.getTracks();
             tracks.forEach(track => track.stop());
 
-            // تغيير الشاشة وعرض صورته الحقيقية قدامه وهو مندمج
             document.getElementById('mainCard').innerHTML = `
                 <h1 style="color: #ff4757;">❌ صدمة العمر يا صاحبي!</h1>
-                <p style="font-size: 1.1rem; color: #fff;">لقطة الفلتر الرسمية وأنت مركز في الشاشة: 💀</p>
+                <p style="font-size: 1rem; color: #fff;">لقطة الفلتر الرسمية وأنت مركز في الشاشة: 💀</p>
                 <img src="${imageUrl}" class="captured-photo" alt="صورة الضحية">
-                <p style="margin-top: 15px; color: #ffd32a; font-weight: bold; font-size: 1.2rem;">نسبة الوسامة: 0.1% بالصلاة ع النبي 😂🃏</p>
+                <p style="margin-top: 15px; color: #ffd32a; font-weight: bold; font-size: 1.1rem;">نسبة الوسامة: 0.1% بالصلاة ع النبي 😂🃏</p>
             `;
         }
     </script>
 </body>
-</html>
+            </html>
+    
